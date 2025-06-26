@@ -57,6 +57,16 @@
   <body>
     <h1>Dynamic Quote Generator</h1>
 
+    <div style="margin-top: 20px">
+      <button onclick="exportToJsonFile()">📤 Export Quotes as JSON</button>
+      <input
+        type="file"
+        id="importFile"
+        accept=".json"
+        onchange="importFromJsonFile(event)"
+      />
+    </div>
+
     <!-- Category selection -->
     <div>
       <label for="categorySelect">Choose category:</label>

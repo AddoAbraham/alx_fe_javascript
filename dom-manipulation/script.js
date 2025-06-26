@@ -1,3 +1,29 @@
+// Load from localStorage
+function loadQuotes() {
+  const savedQuotes = localStorage.getItem("quotes");
+  if (savedQuotes) {
+    quotes = JSON.parse(savedQuotes);
+  } else {
+    quotes = [
+      {
+        text: "The best way to predict the future is to create it.",
+        category: "Motivation",
+      },
+      { text: "JavaScript is fun!", category: "Tech" },
+      {
+        text: "Life is 10% what happens and 90% how we react to it.",
+        category: "Life",
+      },
+    ];
+    saveQuotes();
+  }
+}
+
+// Save to localStorage
+function saveQuotes() {
+  localStorage.setItem("quotes", JSON.stringify(quotes));
+}
+
 // Initial quote list
 let quotes = [
   {
@@ -40,6 +66,18 @@ function showRandomQuote() {
 
   const random = Math.floor(Math.random() * filtered.length);
   quoteDisplay.textContent = filtered[random].text;
+
+  quoteDisplay.textContent = selectedQuote;
+
+  // Save last quote to sessionStorage
+  sessionStorage.setItem("lastQuote", selectedQuote);
+}
+
+function showLastViewedQuote() {
+  const last = sessionStorage.getItem("lastQuote");
+  if (last) {
+    quoteDisplay.textContent = last;
+  }
 }
 
 // Add a new quote and category
@@ -49,6 +87,7 @@ function addQuote() {
 
   if (text && category) {
     quotes.push({ text, category });
+    saveQuotes(); // Save to localStorage
     updateCategoryOptions(); // Update dropdown
     document.getElementById("newQuoteText").value = "";
     document.getElementById("newQuoteCategory").value = "";
@@ -94,3 +133,33 @@ function createAddQuoteForm() {
 // Initialize on load
 updateCategoryOptions();
 createAddQuoteForm(); // 👈 Add this
+
+function exportToJsonFile() {
+  const dataStr = JSON.stringify(quotes, null, 2);
+  const blob = new Blob([dataStr], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "quotes.json";
+  a.click();
+}
+
+function importFromJsonFile(event) {
+  const fileReader = new FileReader();
+  fileReader.onload = function (e) {
+    try {
+      const importedQuotes = JSON.parse(e.target.result);
+      if (Array.isArray(importedQuotes)) {
+        quotes.push(...importedQuotes);
+        saveQuotes();
+        updateCategoryOptions();
+        alert("Quotes imported successfully!");
+      } else {
+        alert("Invalid JSON format.");
+      }
+    } catch (error) {
+      alert("Error reading JSON file.");
+    }
+  };
+  fileReader.readAsText(event.target.files[0]);
+}
