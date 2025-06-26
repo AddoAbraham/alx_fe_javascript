@@ -1,4 +1,4 @@
-const SERVER_API = "https://mocki.io/v1/your-custom-id"; // Replace with your real endpoint
+const SERVER_API = "https://jsonplaceholder.typicode.com/posts";
 
 // Load from localStorage
 function loadQuotes() {
@@ -24,20 +24,27 @@ function loadQuotes() {
 async function fetchQuotesFromServer() {
   try {
     const res = await fetch(SERVER_API);
-    const serverQuotes = await res.json();
+    const serverData = await res.json();
+
+    // Simulate quote structure: title = text, userId = category
+    const serverQuotes = serverData.slice(0, 10).map((post) => ({
+      text: post.title,
+      category: `Category ${post.userId}`,
+    }));
 
     const localChanged = JSON.stringify(quotes);
     const serverChanged = JSON.stringify(serverQuotes);
 
     if (localChanged !== serverChanged) {
       quotes = serverQuotes;
-      saveQuotes();
-      updateCategoryOptions();
-      populateCategories();
-      showSyncMessage("🔁 Quotes were updated from the server.");
+      saveQuotes(); // Save to localStorage
+      updateCategoryOptions(); // Update dropdowns
+      populateCategories(); // Update filter
+      showSyncMessage("🔁 Quotes updated from server (JSONPlaceholder).");
     }
   } catch (error) {
-    console.error("Failed to fetch from server:", error);
+    console.error("❌ Failed to fetch from server:", error);
+    showSyncMessage("⚠️ Could not sync with server.");
   }
 }
 
@@ -244,8 +251,8 @@ populateCategories(); // 🆕 Add this
 createAddQuoteForm();
 showLastViewedQuote();
 
-// 🔄 Sync every 30 seconds
-setInterval(fetchQuotesFromServer, 30000);
-
-// 🔄 Initial fetch when page loads
+// Sync with server immediately
 fetchQuotesFromServer();
+
+// Sync every 30 seconds
+setInterval(fetchQuotesFromServer, 30000);

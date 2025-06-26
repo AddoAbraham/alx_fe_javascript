@@ -18,27 +18,7 @@
         color: #333;
       }
 
-      <!--
-        Category
-        Filter
-        Dropdown
-        --
-        > <div
-        > <label
-        for="categoryFilter"
-        > Filter
-        by
-        Category:</label
-        > <select
-        id="categoryFilter"
-        onchange="filterQuotes()"
-        > <option
-        value="all"
-        > All
-        Categories</option
-        > </select
-        > </div
-        > #quoteDisplay {
+      #quoteDisplay {
         margin: 20px 0;
         padding: 15px;
         background-color: #fff;
@@ -75,10 +55,13 @@
     </style>
   </head>
 
-  <button onclick="fetchQuotesFromServer()">🔄 Sync Quotes Now</button>
   <body>
     <h1>Dynamic Quote Generator</h1>
 
+    <!-- Sync Button -->
+    <button onclick="fetchQuotesFromServer()">🔄 Sync Quotes Now</button>
+
+    <!-- Export / Import -->
     <div style="margin-top: 20px">
       <button onclick="exportToJsonFile()">📤 Export Quotes as JSON</button>
       <input
@@ -89,13 +72,21 @@
       />
     </div>
 
-    <!-- Category selection -->
+    <!-- Category Filter (for filtering displayed quotes) -->
+    <div>
+      <label for="categoryFilter">Filter by Category:</label>
+      <select id="categoryFilter" onchange="filterQuotes()">
+        <option value="all">All Categories</option>
+      </select>
+    </div>
+
+    <!-- Category selection (for generating new quotes) -->
     <div>
       <label for="categorySelect">Choose category:</label>
       <select id="categorySelect"></select>
     </div>
 
-    <!-- Sync message banner -->
+    <!-- Sync status message -->
     <div
       id="syncStatus"
       style="padding: 10px; background: #fff3cd; color: #856404; display: none"
@@ -110,7 +101,7 @@
     <!-- Form placeholder (created with JS) -->
     <div id="addQuoteFormContainer"></div>
 
-    <!-- Link to external JS -->
+    <!-- External JS -->
     <script src="script.js"></script>
   </body>
 </html>
