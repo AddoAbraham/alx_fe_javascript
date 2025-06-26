@@ -120,10 +120,16 @@ function showLastViewedQuote() {
 
 // Add a new quote and category
 function addQuote() {
-  const text = document.getElementById("newQuoteText").value.trim();
-  const category = document.getElementById("newQuoteCategory").value.trim();
+  const textInput = document.getElementById("newQuoteText").value.trim();
+  const categoryInput = document
+    .getElementById("newQuoteCategory")
+    .value.trim();
+
+  const text = textInput.value.trim();
+  const category = categoryInput.value.trim();
 
   if (text && category) {
+    const newQuote = { text, category };
     quotes.push({ text, category });
     saveQuotes(); // Save to localStorage
     updateCategoryOptions(); // Update dropdown
@@ -131,9 +137,37 @@ function addQuote() {
     document.getElementById("newQuoteText").value = "";
     document.getElementById("newQuoteCategory").value = "";
     alert("New quote added!");
+    // Clear inputs
+    textInput.value = "";
+    categoryInput.value = "";
+    alert("✅ Quote added successfully!");
+
+    // 🔄 Send the quote to the server
+    postQuoteToServer(newQuote);
   } else {
-    alert("Please enter both quote and category.");
+    alert("❌ Please enter both quote text and category.");
   }
+}
+
+function postQuoteToServer(quote) {
+  fetch("https://jsonplaceholder.typicode.com/posts", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      title: quote.text,
+      body: quote.category,
+      userId: 1, // Simulated user/category ID
+    }),
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      console.log("✅ Quote sent to server:", data);
+    })
+    .catch((error) => {
+      console.error("❌ Error sending quote to server:", error);
+    });
 }
 
 // Setup event listeners
@@ -251,8 +285,8 @@ populateCategories(); // 🆕 Add this
 createAddQuoteForm();
 showLastViewedQuote();
 
-// Sync with server immediately
-fetchQuotesFromServer();
-
-// Sync every 30 seconds
+// 🔄 Sync every 30 seconds
 setInterval(fetchQuotesFromServer, 30000);
+
+// 🔄 Initial fetch when page loads
+fetchQuotesFromServer();
