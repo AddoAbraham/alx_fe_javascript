@@ -63,3 +63,34 @@ newQuoteBtn.addEventListener("click", showRandomQuote);
 
 // Initialize dropdown when page loads
 updateCategoryOptions();
+
+function createAddQuoteForm() {
+  const formContainer = document.getElementById("addQuoteFormContainer");
+
+  const heading = document.createElement("h3");
+  heading.textContent = "Add a new quote";
+
+  const quoteInput = document.createElement("input");
+  quoteInput.type = "text";
+  quoteInput.id = "newQuoteText";
+  quoteInput.placeholder = "Enter a new quote";
+
+  const categoryInput = document.createElement("input");
+  categoryInput.type = "text";
+  categoryInput.id = "newQuoteCategory";
+  categoryInput.placeholder = "Enter quote category";
+
+  const addButton = document.createElement("button");
+  addButton.textContent = "Add Quote";
+  addButton.onclick = addQuote;
+
+  // Add to form container
+  formContainer.appendChild(heading);
+  formContainer.appendChild(quoteInput);
+  formContainer.appendChild(categoryInput);
+  formContainer.appendChild(addButton);
+}
+
+// Initialize on load
+updateCategoryOptions();
+createAddQuoteForm(); // 👈 Add this
