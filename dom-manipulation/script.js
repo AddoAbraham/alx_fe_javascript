@@ -149,6 +149,40 @@ function addQuote() {
   }
 }
 
+function syncQuotes() {
+  fetch(SERVER_API)
+    .then((res) => res.json())
+    .then((serverData) => {
+      const serverQuotes = serverData.slice(0, 10).map((post) => ({
+        text: post.title,
+        category: `Category ${post.userId}`,
+      }));
+
+      const localChanged = JSON.stringify(quotes);
+      const serverChanged = JSON.stringify(serverQuotes);
+
+      if (localChanged !== serverChanged) {
+        quotes = serverQuotes;
+        saveQuotes();
+        updateCategoryOptions();
+        populateCategories();
+        showSyncMessage("🔁 Quotes synced with server.");
+      } else {
+        showSyncMessage("✅ Local quotes already up-to-date.");
+      }
+
+      // Optional: Send last local quote
+      if (quotes.length > 0) {
+        const lastQuote = quotes[quotes.length - 1];
+        postQuoteToServer(lastQuote);
+      }
+    })
+    .catch((err) => {
+      console.error("❌ Sync failed:", err);
+      showSyncMessage("⚠️ Sync failed. Check your connection.");
+    });
+}
+
 function postQuoteToServer(quote) {
   fetch("https://jsonplaceholder.typicode.com/posts", {
     method: "POST",
@@ -285,8 +319,8 @@ populateCategories(); // 🆕 Add this
 createAddQuoteForm();
 showLastViewedQuote();
 
-// 🔄 Sync every 30 seconds
-setInterval(fetchQuotesFromServer, 30000);
+syncQuotes(); // ✅ Run immediately on load
+setInterval(syncQuotes, 30000); // ✅ Sync every 30 seconds
 
 // 🔄 Initial fetch when page loads
 fetchQuotesFromServer();
