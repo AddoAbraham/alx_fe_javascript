@@ -1,3 +1,5 @@
+const SERVER_API = "https://mocki.io/v1/your-custom-id"; // Replace with your real endpoint
+
 // Load from localStorage
 function loadQuotes() {
   const savedQuotes = localStorage.getItem("quotes");
@@ -17,6 +19,35 @@ function loadQuotes() {
     ];
     saveQuotes();
   }
+}
+
+async function fetchQuotesFromServer() {
+  try {
+    const res = await fetch(SERVER_API);
+    const serverQuotes = await res.json();
+
+    const localChanged = JSON.stringify(quotes);
+    const serverChanged = JSON.stringify(serverQuotes);
+
+    if (localChanged !== serverChanged) {
+      quotes = serverQuotes;
+      saveQuotes();
+      updateCategoryOptions();
+      populateCategories();
+      showSyncMessage("🔁 Quotes were updated from the server.");
+    }
+  } catch (error) {
+    console.error("Failed to fetch from server:", error);
+  }
+}
+
+function showSyncMessage(message) {
+  const syncStatus = document.getElementById("syncStatus");
+  syncStatus.textContent = message;
+  syncStatus.style.display = "block";
+  setTimeout(() => {
+    syncStatus.style.display = "none";
+  }, 5000);
 }
 
 // Save to localStorage
@@ -212,3 +243,9 @@ updateCategoryOptions();
 populateCategories(); // 🆕 Add this
 createAddQuoteForm();
 showLastViewedQuote();
+
+// 🔄 Sync every 30 seconds
+setInterval(fetchQuotesFromServer, 30000);
+
+// 🔄 Initial fetch when page loads
+fetchQuotesFromServer();

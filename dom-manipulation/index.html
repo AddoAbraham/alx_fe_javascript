@@ -74,6 +74,8 @@
       }
     </style>
   </head>
+
+  <button onclick="fetchQuotesFromServer()">🔄 Sync Quotes Now</button>
   <body>
     <h1>Dynamic Quote Generator</h1>
 
@@ -92,6 +94,12 @@
       <label for="categorySelect">Choose category:</label>
       <select id="categorySelect"></select>
     </div>
+
+    <!-- Sync message banner -->
+    <div
+      id="syncStatus"
+      style="padding: 10px; background: #fff3cd; color: #856404; display: none"
+    ></div>
 
     <!-- Quote display -->
     <div id="quoteDisplay">
