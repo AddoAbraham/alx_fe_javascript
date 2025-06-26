@@ -166,7 +166,7 @@ function syncQuotes() {
         saveQuotes();
         updateCategoryOptions();
         populateCategories();
-        showSyncMessage("🔁 Quotes synced with server.");
+        showSyncMessage("Quotes synced with server!"); // ✅ exact required message
       } else {
         showSyncMessage("✅ Local quotes already up-to-date.");
       }
